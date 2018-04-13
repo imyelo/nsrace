@@ -11,11 +11,13 @@ const nslookup = require('../lib/nslookup')
 const ping = require('../lib/ping')
 
 const { OUTPUT } = print
+const DEFAULT_PING_TIMEOUT = 1000
 
 ;(async () => {
   try {
     cli
     .option('-o, --output [format]', 'Specify the format of the output [table|json]', OUTPUT.TABLE)
+    .option('--ping-timeout [ms]', 'Ping timeout', DEFAULT_PING_TIMEOUT)
     .option('-s, --silent')
     .option('-v, --verbose')
     .parse(process.argv)
@@ -52,7 +54,7 @@ const { OUTPUT } = print
 
     progress('Ping', ips.length)
     let times = await Promise.map(ips, (ip) => {
-      return ping(ip).tap(() => progress('Ping')).then((ping) => ({ ip, ping, providers: providers[ip] }))
+      return ping(ip, cli.pingTimeout).tap(() => progress('Ping')).then((ping) => ({ ip, ping, providers: providers[ip] }))
     })
     verbose(`times: ${JSON.stringify(times, null, 2)}`)
 

@@ -1,0 +1,65 @@
+#!/usr/bin/env node
+
+const Promise = require('bluebird')
+const cli = require('commander')
+const chalk = require('chalk')
+const unique = require('just-unique')
+const flatten = require('just-flatten-it')
+const config = require('../lib/config')
+const print = require('../lib/print')
+const nslookup = require('../lib/nslookup')
+const ping = require('../lib/ping')
+
+const { OUTPUT } = print
+
+;(async () => {
+  try {
+    cli
+    .option('-o, --output [format]', 'Specify the format of the output [table|json]', OUTPUT.TABLE)
+    .option('-s, --silent')
+    .option('-v, --verbose')
+    .parse(process.argv)
+
+    function verbose (message) {
+      if (!cli.verbose) {
+        return
+      }
+      console.info(chalk.blue('nsrace > ') + message)
+    }
+
+    const progress = cli.silent ? () => {} : require('../lib/progress')
+
+    let [ domain ] = cli.args
+
+    let servers = config.get('servers')
+
+    progress('NSLookup', servers.length)
+    let groups = await Promise.map(servers, (server) => {
+      return nslookup(domain, server).tap(() => progress('NSLookup')).then((ips) => ({ server, domain, ips }))
+    })
+    verbose(`nslookup result: ${JSON.stringify(groups, null, 2)}`)
+
+    let ips = unique(flatten(groups.map(({ ips }) => ips)))
+    verbose(`ips after removal of repetition: ${JSON.stringify(ips, null, 2)}`)
+
+    let providers = {}
+
+    ips.forEach((ip) => {
+      providers[ip] = groups
+        .filter(({ ips }) => ~ips.indexOf(ip))
+        .map(({ server }) => server)
+    })
+
+    progress('Ping', ips.length)
+    let times = await Promise.map(ips, (ip) => {
+      return ping(ip).tap(() => progress('Ping')).then((ping) => ({ ip, ping, providers: providers[ip] }))
+    })
+    verbose(`times: ${JSON.stringify(times, null, 2)}`)
+
+    let sorted = times.sort((left, right) => left.ping - right.ping)
+
+    print(cli.output, sorted, ['IP', 'Ping (ms)', 'Providers'])
+  } catch (error) {
+    console.log(error)
+  }
+})()

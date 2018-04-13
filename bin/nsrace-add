@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+
+const cli = require('commander')
+const remove = require('just-remove')
+const config = require('../lib/config')
+const { isServerString } = require('../lib/utils')
+
+cli.parse(process.argv)
+
+let latest = config.get('servers') || []
+
+let patch = remove(cli.args, latest).filter((server) => isServerString(server))
+
+config.set('servers', latest.concat(patch))
+
+console.log(`${patch.length} DNS servers added.`)

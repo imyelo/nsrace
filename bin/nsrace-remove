@@ -1,0 +1,15 @@
+#!/usr/bin/env node
+
+const cli = require('commander')
+const remove = require('just-remove')
+const config = require('../lib/config')
+
+cli.parse(process.argv)
+
+let latest = config.get('servers') || []
+
+let next = remove(latest, cli.args)
+
+config.set('servers', next)
+
+console.log(`${latest.length - next.length} DNS servers removed.`)

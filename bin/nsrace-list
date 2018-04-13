@@ -1,0 +1,15 @@
+#!/usr/bin/env node
+
+const cli = require('commander')
+const config = require('../lib/config')
+const print = require('../lib/print')
+
+const { OUTPUT } = print
+
+cli
+  .option('-o, --output [format]', 'Specify the format of the output [table|json]', OUTPUT.TABLE)
+  .parse(process.argv)
+
+let servers = config.get('servers')
+
+print(cli.output, servers, ['Server'])

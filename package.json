@@ -1,0 +1,16 @@
+{
+  "name": "nsrace",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imyelo/nsrace.git"
+  },
+  "author": "yelo <zhihuzeye@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/imyelo/nsrace/issues"
+  },
+  "homepage": "https://github.com/imyelo/nsrace#readme"
+}

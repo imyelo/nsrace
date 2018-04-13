@@ -34,6 +34,7 @@
     "just-unique": "^3.1.1",
     "native-dns": "^0.7.0",
     "ora": "^2.0.0",
-    "tcp-ping": "^0.1.1"
+    "tcp-ping": "^0.1.1",
+    "text-table": "^0.2.0"
   }
 }

@@ -10,11 +10,13 @@ npm i -g nsrace
 ### Basic
 ```bash
 nsrace run github.com
-# ┌────────────────┬────────────────────┬────────────────┐
-# │ IP             │ Ping (ms)          │ Providers      │
-# ├────────────────┼────────────────────┼────────────────┤
-# │ 52.74.223.119  │ 239.1565587        │ 117.50.11.11   │
-# ...
+# √ NSLookup 12/12
+# √ Ping 1/1
+# ┌────────────────┬─────────────────────┬─────────────────┐
+# │ IP             │ Ping (ms)           │ Providers       │
+# ├────────────────┼─────────────────────┼─────────────────┤
+# │ 13.229.188.59  │ 252.43719290000004  │ 117.50.11.11... │
+# └────────────────┴─────────────────────┴─────────────────┘
 ```
 
 ### Output as JSON
@@ -25,10 +27,10 @@ nsrace run github.com -o json
 
 ### Play with [json](https://npm.im/json)
 ```bash
-# first, please install the json package
+# first, install the ``json`` package to the global
 npm i -g json
 
-nsrace run github.com --silent -o json| json 0.ip
+nsrace run github.com --silent -o json | json 0.ip
 # 52.74.223.119
 ```
 
@@ -41,7 +43,7 @@ Run a race and return IPs sorted by speed
 #### Options
 - ``-o, --output [format]``
 
-  Specify the format of the output ``[table|json]``
+  Specify the format of the output ``[table|tsv|json]``
 
   Default: ``table``
 
@@ -66,7 +68,7 @@ List all DNS servers that will be used in the race
 #### Options
 - ``-o, --output [format]``
 
-  Specify the format of the output ``[table|json]``
+  Specify the format of the output ``[table|tsv|json]``
 
   Default: ``table``
 
@@ -76,6 +78,15 @@ Add DNS servers
 
 ### remove [dns]
 Remove DNS servers
+
+
+## Related
+- [native-dns](https://npm.im/native-dns)
+- [tcp-ping](https://npm.im/tcp-ping)
+
+
+## Reference
+- [TSV](https://docs.microsoft.com/en-us/cli/azure/format-output-azure-cli?view=azure-cli-latest#tsv-output-format)
 
 
 ## License

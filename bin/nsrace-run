@@ -16,7 +16,7 @@ const DEFAULT_PING_TIMEOUT = 1000
 ;(async () => {
   try {
     cli
-    .option('-o, --output [format]', 'Specify the format of the output [table|json]', OUTPUT.TABLE)
+    .option('-o, --output [format]', `Specify the format of the output [${Object.values(OUTPUT).join('|')}]`, OUTPUT.TABLE)
     .option('--ping-timeout [ms]', 'Ping timeout', DEFAULT_PING_TIMEOUT)
     .option('-s, --silent', 'Hide the progress')
     .option('-v, --verbose', 'Display verbose information')

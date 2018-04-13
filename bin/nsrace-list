@@ -7,7 +7,7 @@ const print = require('../lib/print')
 const { OUTPUT } = print
 
 cli
-  .option('-o, --output [format]', 'Specify the format of the output [table|json]', OUTPUT.TABLE)
+  .option('-o, --output [format]', `Specify the format of the output [${Object.values(OUTPUT).join('|')}]`, OUTPUT.TABLE)
   .parse(process.argv)
 
 let servers = config.get('servers')

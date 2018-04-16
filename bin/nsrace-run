@@ -37,7 +37,14 @@ const DEFAULT_PING_TIMEOUT = 1000
 
     progress('NSLookup', servers.length)
     let groups = await Promise.map(servers, (server) => {
-      return nslookup(domain, server).tap(() => progress('NSLookup')).then((ips) => ({ server, domain, ips }))
+      return nslookup(domain, server).tap(() => progress.success('NSLookup')).then((ips) => ({ server, domain, ips }), (error) => {
+        progress.warn('NSLookup', error.message)
+        return {
+          server,
+          domain,
+          ips: [],
+        }
+      })
     })
     verbose(`nslookup result: ${JSON.stringify(groups, null, 2)}`)
 
@@ -54,7 +61,14 @@ const DEFAULT_PING_TIMEOUT = 1000
 
     progress('Ping', ips.length)
     let times = await Promise.map(ips, (ip) => {
-      return ping(ip, cli.pingTimeout).tap(() => progress('Ping')).then((ping) => ({ ip, ping, providers: providers[ip] }))
+      return ping(ip, cli.pingTimeout).tap(() => progress.success('Ping')).then((ping) => ({ ip, ping, providers: providers[ip] }), (error) => {
+        progress.warn('Ping', error.message)
+        return {
+          ip,
+          ping: Infinity,
+          providers: providers[ip],
+        }
+      })
     })
     verbose(`times: ${JSON.stringify(times, null, 2)}`)
 

@@ -7,4 +7,5 @@ cli
   .command('list', 'List all DNS servers that will be used in the race')
   .command('add [dns]', 'Add DNS servers')
   .command('remove [dns]', 'Remove DNS servers')
+  .command('reset', 'Reset DNS servers')
   .parse(process.argv)

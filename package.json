@@ -29,11 +29,13 @@
     "cli-table": "^0.3.1",
     "commander": "^2.15.1",
     "conf": "^1.4.0",
+    "got": "^11.8.2",
     "just-flatten-it": "^2.0.0",
     "just-remove": "^2.0.0",
     "just-unique": "^3.1.1",
     "native-dns": "^0.7.0",
     "ora": "^2.0.0",
+    "performance-now": "^2.1.0",
     "tcp-ping": "^0.1.1",
     "text-table": "^0.2.0"
   }

@@ -19,6 +19,17 @@ nsrace run github.com
 # └────────────────┴─────────────────────┴─────────────────┘
 ```
 
+```bash
+nsrace run https://github.githubassets.com/favicons/favicon.svg
+# √ NSLookup 12/12
+# √ Fetch 1/1
+# ┌─────────────────┬─────────────────────┬─────────────────┐
+# │ IP              │ Duration (ms)           │ Providers       │
+# ├─────────────────┼─────────────────────┼─────────────────┤
+# │ 185.199.110.154 │ 189.43719290000004  │ 117.50.11.11... │
+# └─────────────────┴─────────────────────┴─────────────────┘
+```
+
 ### Output as JSON
 ```bash
 nsrace run github.com -o json
@@ -37,7 +48,7 @@ nsrace run github.com --silent -o json | json 0.ip
 Run ``nsrace`` or ``nsrace --help`` for more information.
 
 ## Commands
-### run [domain]
+### run [domain|url]
 Run a race and return IPs sorted by speed
 
 #### Options
@@ -49,7 +60,13 @@ Run a race and return IPs sorted by speed
 
 - ``--ping-timeout [ms]``
 
-  Ping timeout
+  Ping timeout (speed test)
+
+  Default: 1000
+
+- ``--fetch-timeout [ms]``
+
+  Fetch timeout (speed test)
 
   Default: 1000
 

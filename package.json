@@ -1,6 +1,6 @@
 {
   "name": "nsrace",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Runs a race, lookups the fastest IP of any domain from different DNS servers",
   "bin": {
     "nsrace": "bin/nsrace",

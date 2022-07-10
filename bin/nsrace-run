@@ -69,7 +69,7 @@ const DEFAULT_FETCH_TIMEOUT = 1000
     if (isDomainURI) {
       progress('Ping', ips.length)
       let times = await Promise.map(ips, (ip) => {
-        return ping(ip, cli.pingTimeout).tap(() => progress.success('Ping')).then((duration) => ({ ip, duration, providers: providers[ip] }), (error) => {
+        return ping(ip, +cli.pingTimeout).tap(() => progress.success('Ping')).then((duration) => ({ ip, duration, providers: providers[ip] }), (error) => {
           progress.warn('Ping', error.message)
           return {
             ip,
@@ -84,7 +84,7 @@ const DEFAULT_FETCH_TIMEOUT = 1000
     } else {
       progress('Fetch', ips.length)
       let times = await Promise.map(ips, (ip) => {
-        return fetch(uri, ip, cli.fetchTimeout).tap(() => progress.success('Fetch')).then((duration) => ({ ip, duration, providers: providers[ip] }), (error) => {
+        return fetch(uri, ip, +cli.fetchTimeout).tap(() => progress.success('Fetch')).then((duration) => ({ ip, duration, providers: providers[ip] }), (error) => {
           progress.warn('Fetch', error.message)
           return {
             ip,

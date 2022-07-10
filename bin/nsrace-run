@@ -1,17 +1,9 @@
 #!/usr/bin/env node
 
-const Promise = require('bluebird')
-const { URL } = require('url')
 const cli = require('commander')
 const chalk = require('chalk')
-const unique = require('just-unique')
-const flatten = require('just-flatten-it')
-const config = require('../lib/config')
 const print = require('../lib/print')
-const nslookup = require('../lib/nslookup')
-const fetch = require('../lib/speed/fetch')
-const ping = require('../lib/speed/ping')
-const { checkIsDomainURI } = require('../lib/utils')
+const { run } = require('../lib')
 
 const { OUTPUT } = print
 const DEFAULT_PING_TIMEOUT = 1000
@@ -36,66 +28,18 @@ const DEFAULT_FETCH_TIMEOUT = 1000
 
     const progress = cli.silent ? () => {} : require('../lib/progress')
 
-    let [ uri ] = cli.args
-    let isDomainURI = checkIsDomainURI(uri)
-    let domain = isDomainURI ? uri : new URL(uri).hostname
-
-    let servers = config.get('servers')
-
-    progress('NSLookup', servers.length)
-    let groups = await Promise.map(servers, (server) => {
-      return nslookup(domain, server).tap(() => progress.success('NSLookup')).then((ips) => ({ server, domain, ips }), (error) => {
-        progress.warn('NSLookup', error.message)
-        return {
-          server,
-          domain,
-          ips: [],
-        }
-      })
-    })
-    verbose(`nslookup result: ${JSON.stringify(groups, null, 2)}`)
-
-    let ips = unique(flatten(groups.map(({ ips }) => ips)))
-    verbose(`ips after removal of repetition: ${JSON.stringify(ips, null, 2)}`)
-
-    let providers = {}
-
-    ips.forEach((ip) => {
-      providers[ip] = groups
-        .filter(({ ips }) => ~ips.indexOf(ip))
-        .map(({ server }) => server)
+    const { times, isDomainURI } = await run({
+      uri: cli.args[0],
+      pingTimeout: +cli.pingTimeout,
+      fetchTimeout: +cli.fetchTimeout,
+      progress,
+      verbose,
     })
 
     if (isDomainURI) {
-      progress('Ping', ips.length)
-      let times = await Promise.map(ips, (ip) => {
-        return ping(ip, +cli.pingTimeout).tap(() => progress.success('Ping')).then((duration) => ({ ip, duration, providers: providers[ip] }), (error) => {
-          progress.warn('Ping', error.message)
-          return {
-            ip,
-            duration: Infinity,
-            providers: providers[ip],
-          }
-        })
-      })
-      verbose(`times: ${JSON.stringify(times, null, 2)}`)
-      let sorted = times.sort((left, right) => left.duration - right.duration)
-      print(cli.output, sorted, ['IP', 'Ping (ms)', 'Providers'])
+      print(cli.output, times, ['IP', 'Ping (ms)', 'Providers'])
     } else {
-      progress('Fetch', ips.length)
-      let times = await Promise.map(ips, (ip) => {
-        return fetch(uri, ip, +cli.fetchTimeout).tap(() => progress.success('Fetch')).then((duration) => ({ ip, duration, providers: providers[ip] }), (error) => {
-          progress.warn('Fetch', error.message)
-          return {
-            ip,
-            duration: Infinity,
-            providers: providers[ip],
-          }
-        })
-      })
-      verbose(`times: ${JSON.stringify(times, null, 2)}`)
-      let sorted = times.sort((left, right) => left.duration - right.duration)
-      print(cli.output, sorted, ['IP', 'Duration (ms)', 'Providers'])
+      print(cli.output, times, ['IP', 'Duration (ms)', 'Providers'])
     }
   } catch (error) {
     console.log(error)

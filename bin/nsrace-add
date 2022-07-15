@@ -1,16 +1,24 @@
 #!/usr/bin/env node
 
-const cli = require('commander')
-const remove = require('just-remove')
-const config = require('../lib/config')
-const { checkIsServerString } = require('../lib/utils')
+const cli = require("commander")
+const assert = require('assert')
+const remove = require("just-remove")
+const config = require("../lib/config")
+const { checkIsServerString } = require("../lib/utils")
 
-cli.parse(process.argv)
+const DEFAULT_TYPE = 'dns'
 
-let latest = config.get('servers') || []
+cli
+  .option("-t, --type [dns|doh]", `Server type`, DEFAULT_TYPE)
+  .parse(process.argv)
 
-let patch = remove(cli.args, latest).filter((server) => checkIsServerString(server))
+assert(['dns', 'doh'].includes(cli.type), 'Invalid type')
 
-config.set('servers', latest.concat(patch))
+const key = `servers.${cli.type}`
+const latest = config.get(key) || []
+const patch = remove(cli.args, latest).filter((server) =>
+  checkIsServerString(server)
+)
+config.set(key, latest.concat(patch))
 
-console.log(`${patch.length} DNS servers added.`)
+console.log(`${patch.length} ${cli.type.toUpperCase()} servers added.`)

@@ -12,4 +12,9 @@ cli
 
 let servers = config.get('servers')
 
-print(cli.output, servers, ['Server'])
+if (cli.output === OUTPUT.TABLE) {
+  print(cli.output, [['DNS', ...servers.dns]], [])
+  print(cli.output, [['DOH', ...servers.doh]], [])
+} else {
+  print(cli.output, servers)
+}

@@ -2,20 +2,22 @@
   "name": "nsrace",
   "version": "0.3.0",
   "description": "Runs a race, lookups the fastest IP of any domain from different DNS servers",
-  "main": "./lib/index.js",
+  "type": "module",
+  "exports": "./lib/index.js",
+  "types": "./types/index.d.js",
   "bin": {
-    "nsrace": "bin/nsrace",
-    "nsrace-add": "bin/nsrace-add",
-    "nsrace-list": "bin/nsrace-list",
-    "nsrace-remove": "bin/nsrace-remove",
-    "nsrace-run": "bin/nsrace-run"
+    "nsrace": "lib/bin/nsrace",
+    "nsrace-add": "lib/bin/nsrace-add",
+    "nsrace-list": "lib/bin/nsrace-list",
+    "nsrace-remove": "lib/bin/nsrace-remove",
+    "nsrace-run": "lib/bin/nsrace-run"
   },
   "files": [
-    "bin",
-    "lib"
+    "lib",
+    "types"
   ],
   "engines": {
-    "node": ">= 12"
+    "node": ">= 16"
   },
   "repository": {
     "type": "git",
@@ -28,20 +30,44 @@
   },
   "homepage": "https://github.com/imyelo/nsrace#readme",
   "dependencies": {
-    "bluebird": "^3.5.1",
-    "chalk": "^2.3.2",
-    "cli-table": "^0.3.1",
-    "commander": "^2.15.1",
-    "conf": "^1.4.0",
+    "bluebird": "^3.7.2",
+    "chalk": "^5.0.1",
+    "cli-table": "^0.3.11",
+    "commander": "^9.4.0",
+    "conf": "^10.1.2",
     "dns2": "^2.0.2",
-    "got": "^11.8.2",
-    "just-flatten-it": "^2.0.0",
-    "just-remove": "^2.0.0",
-    "just-unique": "^3.1.1",
+    "got": "^12.1.0",
+    "just-flatten-it": "^5.0.1",
+    "just-remove": "^3.0.1",
+    "just-unique": "^4.0.1",
     "native-dns": "^0.7.0",
-    "ora": "^2.0.0",
+    "ora": "^6.1.2",
     "performance-now": "^2.1.0",
     "tcp-ping": "^0.1.1",
     "text-table": "^0.2.0"
+  },
+  "devDependencies": {
+    "@yelo/eslint-config": "^0.0.3",
+    "@yelo/prettier-config": "^0.0.1",
+    "@yelo/tsconfig": "^0.0.2",
+    "eslint": "^8.20.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1",
+    "prettier-eslint-cli": "^6.0.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.7.4"
+  },
+  "scripts": {
+    "clean": "rimraf ./lib ./types",
+    "prebuild": "npm run clean",
+    "build": "tsc -p ./tsconfig.build.json",
+    "lint": "prettier-eslint --write $PWD/\"src/**/*.[jt]s?(x)\" "
+  },
+  "prettier": "@yelo/prettier-config",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const config = require('../lib/config')
+import { config } from '../core/config.js'
 
 config.clear()
 console.log('Reset ✓')

@@ -1,0 +1,58 @@
+#!/usr/bin/env node
+
+import { program } from 'commander'
+import chalk from 'chalk'
+import { print, OUTPUT } from '../core/print.js'
+import { run } from '../core/index.js'
+
+const DEFAULT_PING_TIMEOUT = '1000'
+const DEFAULT_FETCH_TIMEOUT = '1000'
+
+;(async () => {
+  try {
+    program
+      .option(
+        '-o, --output [format]',
+        `Specify the format of the output [${Object.values(OUTPUT).join('|')}]`,
+        OUTPUT.TABLE
+      )
+      .option('--ping-timeout [ms]', 'Ping timeout', DEFAULT_PING_TIMEOUT)
+      .option('--fetch-timeout [ms]', 'Fetch timeout', DEFAULT_FETCH_TIMEOUT)
+      .option('-s, --silent', 'Hide the progress')
+      .option('-v, --verbose', 'Display verbose information')
+      .parse(process.argv)
+
+    const options = program.opts<{
+      output: typeof OUTPUT[keyof typeof OUTPUT]
+      pingTimeout: string
+      fetchTimeout: string
+      silent: boolean
+      verbose: boolean
+    }>()
+
+    const verbose = message => {
+      if (!options.verbose) {
+        return
+      }
+      console.info(chalk.blue('nsrace > ') + message)
+    }
+
+    const progress = options.silent ? ((() => {}) as any) : import('../core/progress.js')
+
+    const { times, isDomainURI } = await run({
+      uri: program.args[0],
+      pingTimeout: +options.pingTimeout,
+      fetchTimeout: +options.fetchTimeout,
+      progress,
+      verbose,
+    })
+
+    if (isDomainURI) {
+      print(options.output, times, ['IP', 'Ping (ms)', 'Providers'])
+    } else {
+      print(options.output, times, ['IP', 'Duration (ms)', 'Providers'])
+    }
+  } catch (error) {
+    console.log(error)
+  }
+})()

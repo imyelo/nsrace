@@ -1,4 +1,5 @@
-const Conf = require('conf')
+// eslint-disable-next-line import/no-named-default
+import { default as Conf } from 'conf'
 
 const DEFAULT_CONFIG = {
   // Check https://public-dns.info/ for more servers.
@@ -12,7 +13,7 @@ const DEFAULT_CONFIG = {
       '101.226.4.6', // DNSPai (360) - 电信
       '123.125.81.6', // DNSPai (360) - 联通
       '101.226.4.6', // DNSPai (360) - 移动
-      '101.226.4.6',  // DNSPai (360) - 铁通
+      '101.226.4.6', // DNSPai (360) - 铁通
       '101.6.6.6', // DNS666 (TUNA) - 清华大学
       '1.2.4.8', // CNNIC sDNS
       '8.8.8.8', // Google Public DNS
@@ -30,4 +31,4 @@ const DEFAULT_CONFIG = {
   },
 }
 
-module.exports = new Conf({ defaults: DEFAULT_CONFIG })
+export const config = new Conf({ defaults: DEFAULT_CONFIG })

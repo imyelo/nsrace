@@ -37,7 +37,7 @@ const DEFAULT_FETCH_TIMEOUT = '1000'
       console.info(chalk.blue('nsrace > ') + message)
     }
 
-    const progress = options.silent ? ((() => {}) as any) : import('../core/progress.js')
+    const progress = options.silent ? ((() => {}) as any) : (await import('../core/progress.js')).progress
 
     const { times, isDomainURI } = await run({
       uri: program.args[0],

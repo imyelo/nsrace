@@ -1,6 +1,8 @@
 import Promise from 'bluebird'
 import unique from 'just-unique'
-import { UDPClient, DOHClient, Packet } from 'dns2'
+import dns2 from 'dns2'
+
+const { UDPClient, DOHClient, Packet } = dns2
 
 const DEFAULT_TIMEOUT = 4 * 1000 // 4s
 const DEFAULT_NS = '8.8.8.8'

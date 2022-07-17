@@ -51,6 +51,8 @@
     "@yelo/prettier-config": "^0.0.1",
     "@yelo/tsconfig": "^0.0.2",
     "eslint": "^8.20.0",
+    "gulp": "^4.0.2",
+    "gulp-chmod": "^3.0.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
@@ -61,7 +63,7 @@
   "scripts": {
     "clean": "rimraf ./lib ./types",
     "prebuild": "npm run clean",
-    "build": "tsc -p ./tsconfig.build.json",
+    "build": "tsc -p ./tsconfig.build.json && node ./build/chmod-bin.js",
     "lint": "prettier-eslint --write $PWD/\"src/**/*.[jt]s?(x)\" "
   },
   "prettier": "@yelo/prettier-config",

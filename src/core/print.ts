@@ -13,31 +13,29 @@ function pretty(obj: unknown) {
   return obj
 }
 
-export function print(format: IOutputFormat, list: unknown, titles: string[]) {
-  let payload = list
-  if (format === 'tsv' || format === 'table') {
-    if (typeof list[0] === 'object') {
-      payload = (list as unknown[]).map(item => Object.values(item).map(pretty))
-    } else {
-      payload = (list as unknown[]).map(item => [item].map(pretty))
-    }
+export function print(format: 'json', list: unknown[]): void
+export function print(format: 'table' | 'tsv', list: unknown[], titles: string[]): void
+export function print(format: IOutputFormat, list: unknown[], titles?: string[]): void {
+  if (format === 'json') {
+    return log(JSON.stringify(list))
   }
+
+  const sheet: {}[][] =
+    typeof list[0] === 'object'
+      ? list.map(item => Object.values(item).map(pretty))
+      : list.map(item => [item].map(pretty))
 
   if (format === 'table') {
     const table = new Table({
       head: titles,
     })
-    table.push(...payload as any)
+    table.push(...sheet)
 
     return log(table.toString())
   }
 
   if (format === 'tsv') {
-    return log(tsv(payload as any))
-  }
-
-  if (format === 'json') {
-    return log(JSON.stringify(payload))
+    return log(tsv(sheet))
   }
 
   throw new Error('Unknown print format.')

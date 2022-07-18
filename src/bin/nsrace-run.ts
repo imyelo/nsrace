@@ -49,7 +49,9 @@ const DEFAULT_FETCH_TIMEOUT = '1000'
       providers: providers?.map(({ server, protocol }) => (protocol === 'DoH' ? `${server} (DoH)` : server)),
     }))
 
-    if (isDomainURI) {
+    if (options.output === 'json') {
+      print('json', times)
+    } else if (isDomainURI) {
       print(options.output, prettyTimes, ['IP', 'Ping (ms)', 'Providers'])
     } else {
       print(options.output, prettyTimes, ['IP', 'Duration (ms)', 'Providers'])

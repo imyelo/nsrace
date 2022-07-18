@@ -236,10 +236,10 @@
     "@typescript-eslint/types" "5.30.6"
     eslint-visitor-keys "^3.3.0"
 
-"@yelo/eslint-config@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@yelo/eslint-config/-/eslint-config-0.0.3.tgz#a2948a2926584e0278a4954115a8b13e47f51b1a"
-  integrity sha512-3s4ncPwY53qsdz0fqdF9HgDvjFYFKlUwEQQOfH/uj2NMmpZrFe3jNPF0JnHbDiYgR5BrZhXXPDwSPcDYbrd/QA==
+"@yelo/eslint-config@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@yelo/eslint-config/-/eslint-config-0.0.4.tgz#c55d164bacf3f7497b73652f991f0bfc56ec70bb"
+  integrity sha512-U204jZtsOzxxU/uXXK3t8/0xrg/DtIN6Rb/Qmi/LXdUfn/+LE7eAqgFRuBE0KH4l0X492i0DD4ZOXI4FA6axaA==
   dependencies:
     "@typescript-eslint/eslint-plugin" "^5.30.6"
     "@typescript-eslint/parser" "^5.30.6"

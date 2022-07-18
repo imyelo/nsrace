@@ -17,6 +17,10 @@ interface ILookupRecord {
   domain: string
   ips: string[]
 }
+interface IServer {
+  server: string
+  protocol: IProtocol
+}
 
 const defaultProgress: IProgress = (() => {
   const progress = () => {}
@@ -37,43 +41,26 @@ export const race = async ({
   const isDomainURI = checkIsDomainURI(uri)
   const domain = isDomainURI ? uri : new URL(uri).hostname
 
-  const servers = config.get('servers')
+  const serversGroups = config.get('servers')
+  const servers = [
+    ...serversGroups.dns.map<IServer>(server => ({ server, protocol: 'DNS' })),
+    ...serversGroups.doh.map<IServer>(server => ({ server, protocol: 'DoH' })),
+  ]
 
   const groups: ILookupRecord[] = []
 
-  progress('DNS Lookup', servers.dns.length)
+  progress('NSLookup', servers.length)
   groups.push(
     ...(await pAll(
-      servers.dns.map<() => Promise<ILookupRecord>>(server => async () => {
+      servers.map(({ server, protocol }) => async () => {
         try {
           const ips = await nslookup(domain, server)
-          progress.success('DNS Lookup')
-          return { protocol: 'DNS', server, domain, ips }
+          progress.success('NSLookup')
+          return { protocol, server, domain, ips }
         } catch (error) {
-          progress.warn('DNS Lookup', error.message)
+          progress.warn('NSLookup', error.message)
           return {
-            protocol: 'DNS',
-            server,
-            domain,
-            ips: [],
-          }
-        }
-      })
-    ))
-  )
-
-  progress('DoH Lookup', servers.doh.length)
-  groups.push(
-    ...(await pAll(
-      servers.doh.map<() => Promise<ILookupRecord>>(server => async () => {
-        try {
-          const ips = await nslookup(domain, server)
-          progress.success('DoH Lookup')
-          return { protocol: 'DoH', server, domain, ips }
-        } catch (error) {
-          progress.warn('DoH Lookup', error.message)
-          return {
-            protocol: 'DoH',
+            protocol,
             server,
             domain,
             ips: [],

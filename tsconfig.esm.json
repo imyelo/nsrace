@@ -2,8 +2,7 @@
   "extends": "@yelo/tsconfig",
   "include": ["src"],
   "compilerOptions": {
-    "esModuleInterop": true,
-    "outDir": "lib",
-    "declarationDir": "types"
+    "outDir": "dist/esm",
+    "declarationDir": "dist/types"
   }
 }

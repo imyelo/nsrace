@@ -5,21 +5,20 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./types/index.d.ts",
-      "default": "./lib/index.js"
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/esm/index.js"
     }
   },
-  "types": "./types/index.d.js",
+  "types": "./dist/types/index.d.js",
   "bin": {
-    "nsrace": "lib/bin/nsrace",
-    "nsrace-add": "lib/bin/nsrace-add",
-    "nsrace-list": "lib/bin/nsrace-list",
-    "nsrace-remove": "lib/bin/nsrace-remove",
-    "nsrace-run": "lib/bin/nsrace-run"
+    "nsrace": "dist/esm/bin/nsrace",
+    "nsrace-add": "dist/esm/bin/nsrace-add",
+    "nsrace-list": "dist/esm/bin/nsrace-list",
+    "nsrace-remove": "dist/esm/bin/nsrace-remove",
+    "nsrace-run": "dist/esm/bin/nsrace-run"
   },
   "files": [
-    "lib",
-    "types"
+    "dist"
   ],
   "engines": {
     "node": ">= 16"
@@ -71,9 +70,9 @@
     "typescript": "^4.7.4"
   },
   "scripts": {
-    "clean": "rimraf ./lib ./types",
+    "clean": "rimraf ./dist",
     "prebuild": "npm run clean",
-    "build": "tsc -p ./tsconfig.build.json && node ./build/chmod-bin.js",
+    "build": "tsc -p ./tsconfig.esm.json && node ./build/chmod-bin.js",
     "lint": "prettier-eslint --write $PWD/\"src/**/*.[jt]s?(x)\" ",
     "release": "np"
   },

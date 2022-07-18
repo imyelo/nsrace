@@ -3,7 +3,7 @@
 import { program } from 'commander'
 import chalk from 'chalk'
 import { print, OUTPUT_FORMATS, IOutputFormat } from '../core/print.js'
-import { run } from '../core/index.js'
+import { race } from '../core/index.js'
 
 const DEFAULT_PING_TIMEOUT = '1000'
 const DEFAULT_FETCH_TIMEOUT = '1000'
@@ -35,7 +35,7 @@ const DEFAULT_FETCH_TIMEOUT = '1000'
 
     const progress = options.silent ? ((() => {}) as any) : (await import('../core/progress.js')).progress
 
-    const { times, isDomainURI } = await run({
+    const { times, isDomainURI } = await race({
       uri: program.args[0],
       pingTimeout: +options.pingTimeout,
       fetchTimeout: +options.fetchTimeout,

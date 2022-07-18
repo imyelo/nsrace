@@ -19,14 +19,14 @@ export interface ITimeRecord {
   }[]
 }
 
-export interface IRunOption {
+export interface IRaceOption {
   uri: string
   pingTimeout: number
   fetchTimeout: number
   progress?: IProgress
   verbose?: IVerbose
 }
-export interface IRunResult {
+export interface IRaceResult {
   times: ITimeRecord[]
   isDomainURI: boolean
 }

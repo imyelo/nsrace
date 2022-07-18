@@ -7,7 +7,7 @@ import nslookup from './nslookup/index.js'
 import { fetch } from './speed/fetch.js'
 import { ping } from './speed/ping.js'
 import { checkIsDomainURI } from './utils.js'
-import { IProtocol, IProgress, IVerbose, ITimeRecord, IRunOption, IRunResult } from './interface.js'
+import { IProtocol, IProgress, IVerbose, ITimeRecord, IRaceOption, IRaceResult } from './interface.js'
 
 export * from './interface.js'
 
@@ -27,13 +27,13 @@ const defaultProgress: IProgress = (() => {
 })()
 const defaultVerbose: IVerbose = () => {}
 
-export const run = async ({
+export const race = async ({
   uri,
   pingTimeout,
   fetchTimeout,
   progress = defaultProgress,
   verbose = defaultVerbose,
-}: IRunOption): Promise<IRunResult> => {
+}: IRaceOption): Promise<IRaceResult> => {
   const isDomainURI = checkIsDomainURI(uri)
   const domain = isDomainURI ? uri : new URL(uri).hostname
 
@@ -44,11 +44,11 @@ export const run = async ({
   progress('DNS Lookup', servers.dns.length)
   groups.push(
     ...(await pAll(
-      servers.dns.map(server => async () => {
+      servers.dns.map<() => Promise<ILookupRecord>>(server => async () => {
         try {
           const ips = await nslookup(domain, server)
           progress.success('DNS Lookup')
-          return { protocol: 'DNS', server, domain, ips } as ILookupRecord
+          return { protocol: 'DNS', server, domain, ips }
         } catch (error) {
           progress.warn('DNS Lookup', error.message)
           return {
@@ -56,7 +56,7 @@ export const run = async ({
             server,
             domain,
             ips: [],
-          } as ILookupRecord
+          }
         }
       })
     ))
@@ -65,11 +65,11 @@ export const run = async ({
   progress('DoH Lookup', servers.doh.length)
   groups.push(
     ...(await pAll(
-      servers.doh.map(server => async () => {
+      servers.doh.map<() => Promise<ILookupRecord>>(server => async () => {
         try {
           const ips = await nslookup(domain, server)
           progress.success('DoH Lookup')
-          return { protocol: 'DoH', server, domain, ips } as ILookupRecord
+          return { protocol: 'DoH', server, domain, ips }
         } catch (error) {
           progress.warn('DoH Lookup', error.message)
           return {
@@ -77,7 +77,7 @@ export const run = async ({
             server,
             domain,
             ips: [],
-          } as ILookupRecord
+          }
         }
       })
     ))
@@ -96,18 +96,18 @@ export const run = async ({
   if (isDomainURI) {
     progress('Ping', ips.length)
     const times: ITimeRecord[] = await pAll(
-      ips.map(ip => async () => {
+      ips.map<() => Promise<ITimeRecord>>(ip => async () => {
         try {
           const duration = await ping(ip, pingTimeout)
           progress.success('Ping')
-          return { ip, duration, providers: providers[ip] } as ITimeRecord
+          return { ip, duration, providers: providers[ip] }
         } catch (error) {
           progress.warn('Ping', error.message)
           return {
             ip,
             duration: Infinity,
             providers: providers[ip],
-          } as ITimeRecord
+          }
         }
       })
     )
@@ -118,18 +118,18 @@ export const run = async ({
 
   progress('Fetch', ips.length)
   const times: ITimeRecord[] = await pAll(
-    ips.map(ip => async () => {
+    ips.map<() => Promise<ITimeRecord>>(ip => async () => {
       try {
         const duration = await fetch(uri, ip, fetchTimeout)
         progress.success('Fetch')
-        return { ip, duration, providers: providers[ip] } as ITimeRecord
+        return { ip, duration, providers: providers[ip] }
       } catch (error) {
         progress.warn('Fetch', error.message)
         return {
           ip,
           duration: Infinity,
           providers: providers[ip],
-        } as ITimeRecord
+        }
       }
     })
   )

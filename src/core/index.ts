@@ -1,7 +1,7 @@
-import Bluebird from 'bluebird'
 import { URL } from 'node:url'
 import unique from 'just-unique'
 import flatten from 'just-flatten-it'
+import pAll from 'p-all'
 import { config } from './config.js'
 import nslookup from './nslookup/index.js'
 import { fetch } from './speed/fetch.js'
@@ -43,48 +43,46 @@ export const run = async ({
 
   progress('DNS Lookup', servers.dns.length)
   groups.push(
-    ...(await Bluebird.map(servers.dns, server => {
-      return nslookup(domain, server)
-        .tap(() => progress.success('DNS Lookup'))
-        .then(
-          ips => ({ protocol: 'DNS', server, domain, ips } as ILookupRecord),
-          error => {
-            progress.warn('DNS Lookup', error.message)
-            return {
-              protocol: 'DNS',
-              server,
-              domain,
-              ips: [],
-            } as ILookupRecord
-          }
-        )
-    }))
+    ...(await pAll(
+      servers.dns.map(server => async () => {
+        try {
+          const ips = await nslookup(domain, server)
+          progress.success('DNS Lookup')
+          return { protocol: 'DNS', server, domain, ips } as ILookupRecord
+        } catch (error) {
+          progress.warn('DNS Lookup', error.message)
+          return {
+            protocol: 'DNS',
+            server,
+            domain,
+            ips: [],
+          } as ILookupRecord
+        }
+      })
+    ))
   )
+
   progress('DoH Lookup', servers.doh.length)
   groups.push(
-    ...(await Bluebird.map(servers.doh, server => {
-      return nslookup(domain, server, 'DOH')
-        .tap(() => progress.success('DoH Lookup'))
-        .then(
-          ips =>
-            ({
-              protocol: 'DoH',
-              server,
-              domain,
-              ips,
-            } as ILookupRecord),
-          error => {
-            progress.warn('DoH Lookup', error.message)
-            return {
-              protocol: 'DoH',
-              server,
-              domain,
-              ips: [],
-            } as ILookupRecord
-          }
-        )
-    }))
+    ...(await pAll(
+      servers.doh.map(server => async () => {
+        try {
+          const ips = await nslookup(domain, server)
+          progress.success('DoH Lookup')
+          return { protocol: 'DoH', server, domain, ips } as ILookupRecord
+        } catch (error) {
+          progress.warn('DoH Lookup', error.message)
+          return {
+            protocol: 'DoH',
+            server,
+            domain,
+            ips: [],
+          } as ILookupRecord
+        }
+      })
+    ))
   )
+
   verbose(`nslookup result: ${JSON.stringify(groups, null, 2)}`)
 
   const ips: string[] = unique(flatten(groups.map(({ ips }) => ips)))
@@ -97,42 +95,44 @@ export const run = async ({
 
   if (isDomainURI) {
     progress('Ping', ips.length)
-    const times: ITimeRecord[] = await Bluebird.map(ips, ip => {
-      return ping(ip, pingTimeout)
-        .tap(() => progress.success('Ping'))
-        .then(
-          duration => ({ ip, duration, providers: providers[ip] } as ITimeRecord),
-          error => {
-            progress.warn('Ping', error.message)
-            return {
-              ip,
-              duration: Infinity,
-              providers: providers[ip],
-            } as ITimeRecord
-          }
-        )
-    })
-    verbose(`times: ${JSON.stringify(times, null, 2)}`)
-    const sorted = times.sort((left, right) => left.duration - right.duration)
-    return { times: sorted, isDomainURI }
-  }
-
-  progress('Fetch', ips.length)
-  const times: ITimeRecord[] = await Bluebird.map(ips, ip => {
-    return fetch(uri, ip, fetchTimeout)
-      .tap(() => progress.success('Fetch'))
-      .then(
-        duration => ({ ip, duration, providers: providers[ip] } as ITimeRecord),
-        error => {
-          progress.warn('Fetch', error.message)
+    const times: ITimeRecord[] = await pAll(
+      ips.map(ip => async () => {
+        try {
+          const duration = await ping(ip, pingTimeout)
+          progress.success('Ping')
+          return { ip, duration, providers: providers[ip] } as ITimeRecord
+        } catch (error) {
+          progress.warn('Ping', error.message)
           return {
             ip,
             duration: Infinity,
             providers: providers[ip],
           } as ITimeRecord
         }
-      )
-  })
+      })
+    )
+    verbose(`times: ${JSON.stringify(times, null, 2)}`)
+    const sorted = times.sort((left, right) => left.duration - right.duration)
+    return { times: sorted, isDomainURI }
+  }
+
+  progress('Fetch', ips.length)
+  const times: ITimeRecord[] = await pAll(
+    ips.map(ip => async () => {
+      try {
+        const duration = await fetch(uri, ip, fetchTimeout)
+        progress.success('Fetch')
+        return { ip, duration, providers: providers[ip] } as ITimeRecord
+      } catch (error) {
+        progress.warn('Fetch', error.message)
+        return {
+          ip,
+          duration: Infinity,
+          providers: providers[ip],
+        } as ITimeRecord
+      }
+    })
+  )
   verbose(`times: ${JSON.stringify(times, null, 2)}`)
   const sorted = times.sort((left, right) => left.duration - right.duration)
   return { times: sorted, isDomainURI }

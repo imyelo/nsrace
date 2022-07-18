@@ -1,6 +1,6 @@
-import Bluebird from 'bluebird'
 import unique from 'just-unique'
 import dns2 from 'dns2'
+import pTimeout from 'p-timeout'
 
 const { UDPClient, DOHClient, Packet } = dns2
 
@@ -27,14 +27,12 @@ const createDNSClient = (ns: string, protocol) => {
   throw new Error('unexpected dns protocol')
 }
 
-export const nslookup = (domain, ns = DEFAULT_NS, protocol = PROTOCOL.UDP) =>
-  Bluebird.resolve()
-    .then(async () => {
-      const lookup = createDNSClient(ns, protocol)
-      const result = await lookup(domain)
-      const ips = result.answers
-        .filter(({ type }) => type === Packet.TYPE.A || type === Packet.TYPE.AAAA)
-        .map(({ address }) => address)
-      return unique(ips)
-    })
-    .timeout(DEFAULT_TIMEOUT)
+
+export const nslookup = async (domain: string, ns = DEFAULT_NS, protocol = PROTOCOL.UDP) => {
+  const lookup = createDNSClient(ns, protocol)
+  const result = await pTimeout(lookup(domain), DEFAULT_TIMEOUT)
+  const ips = result.answers
+    .filter(({ type }) => type === Packet.TYPE.A || type === Packet.TYPE.AAAA)
+    .map(({ address }) => address)
+  return unique(ips)
+}

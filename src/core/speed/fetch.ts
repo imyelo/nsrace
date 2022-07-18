@@ -1,4 +1,3 @@
-import Bluebird from 'bluebird'
 import got from 'got'
 import now from 'performance-now'
 
@@ -15,8 +14,8 @@ const createStaticLookup =
   (hostname, options, callback) =>
     callback(null, ip, version || 4)
 
-export const fetch = (url: string, ns: string, timeout: number = 10 * 1000): Bluebird<number> => {
-  return new Bluebird((resolve, reject) => {
+export const fetch = (url: string, ns: string, timeout: number = 10 * 1000): Promise<number> => {
+  return new Promise((resolve, reject) => {
     const startAt = now()
     got(url, {
       dnsLookup: createStaticLookup(ns),

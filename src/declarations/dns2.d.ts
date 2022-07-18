@@ -1,5 +1,5 @@
 declare module 'dns2' {
-  function Lookup(domain: string): Promise<{
+  type Lookup = (domain: string) => Promise<{
     answers: {
       type: string
       address: string

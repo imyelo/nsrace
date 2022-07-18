@@ -1,12 +1,11 @@
-import Bluebird from 'bluebird'
 import unique from 'just-unique'
 import dns from 'native-dns'
 
 const DEFAULT_NS = '8.8.8.8'
 const DEFAULT_SERVER_PORT = 53
 
-export const nslookup = (domain: string, ns: string = DEFAULT_NS): Bluebird<string[]> => {
-  return new Bluebird((resolve, reject) => {
+export const nslookup = (domain: string, ns: string = DEFAULT_NS): Promise<string[]> => {
+  return new Promise((resolve, reject) => {
     const ips: string[] = []
 
     const [address, port = DEFAULT_SERVER_PORT] = ns.split(':')

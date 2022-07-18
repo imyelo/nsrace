@@ -5,13 +5,14 @@ import assert from 'assert'
 import remove from 'just-remove'
 import { config } from '../core/config.js'
 import { checkIsServerString } from '../core/utils.js'
+import type { ICLIProtocolType } from '../core/interface.js'
 
-const DEFAULT_TYPE = 'dns'
+const DEFAULT_TYPE: ICLIProtocolType = 'dns'
 
 program.option('-t, --type [dns|doh]', `Server type`, DEFAULT_TYPE).parse(process.argv)
 
 const options = program.opts<{
-  type: 'dns' | 'doh'
+  type: ICLIProtocolType
 }>()
 
 assert(['dns', 'doh'].includes(options.type), 'Invalid type')

@@ -1,45 +1,42 @@
 import Table from 'cli-table'
 import tsv from 'text-table'
 
-export const OUTPUT = {
-  TABLE: 'table',
-  TSV: 'tsv',
-  JSON: 'json',
-} as const
+export const OUTPUT_FORMATS = ['table', 'tsv', 'json'] as const
+export type IOutputFormat = typeof OUTPUT_FORMATS[number]
 
 const { log } = console
 
-function pretty(obj) {
+function pretty(obj: unknown) {
   if (Array.isArray(obj)) {
     return obj.join('|')
   }
   return obj
 }
 
-export function print(format, list, titles) {
+export function print(format: IOutputFormat, list: unknown, titles: string[]) {
   let payload = list
-  if ([OUTPUT.TABLE, OUTPUT.TSV].includes(format)) {
+  if (format === 'tsv' || format === 'table') {
     if (typeof list[0] === 'object') {
-      payload = list.map(item => Object.values(item).map(pretty))
+      payload = (list as unknown[]).map(item => Object.values(item).map(pretty))
     } else {
-      payload = list.map(item => [item].map(pretty))
+      payload = (list as unknown[]).map(item => [item].map(pretty))
     }
   }
 
-  if (format === OUTPUT.TABLE) {
+  if (format === 'table') {
     const table = new Table({
       head: titles,
     })
-    table.push(...payload)
+    table.push(...payload as any)
 
     return log(table.toString())
   }
 
-  if (format === OUTPUT.TSV) {
-    return log(tsv(payload))
+  if (format === 'tsv') {
+    return log(tsv(payload as any))
   }
 
-  if (format === OUTPUT.JSON) {
+  if (format === 'json') {
     return log(JSON.stringify(payload))
   }
 

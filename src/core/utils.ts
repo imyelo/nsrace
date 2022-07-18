@@ -1,6 +1,6 @@
 import { isIP } from 'node:net'
 
-export const checkIsServerString = server => {
+export const checkIsServerString = (server: string) => {
   const matched = server.match(/^([^:]*)(?::(\d*))?$/)
   if (!matched) {
     return false
@@ -12,6 +12,6 @@ export const checkIsServerString = server => {
   return true
 }
 
-export const checkIsDomainURI = url => {
+export const checkIsDomainURI = (url: string) => {
   return !url.includes('/')
 }

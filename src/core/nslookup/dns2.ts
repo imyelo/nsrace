@@ -1,4 +1,4 @@
-import Promise from 'bluebird'
+import Bluebird from 'bluebird'
 import unique from 'just-unique'
 import dns2 from 'dns2'
 
@@ -13,12 +13,12 @@ const PROTOCOL = {
   DOH: 'DOH',
 }
 
-const createDNSClient = (ns, protocol) => {
+const createDNSClient = (ns: string, protocol) => {
   const [address, port = DEFAULT_SERVER_PORT] = ns.split(':')
   if (protocol === PROTOCOL.UDP)
     return UDPClient({
       dns: address,
-      port,
+      port: +port,
     })
   if (protocol === PROTOCOL.DOH)
     return DOHClient({
@@ -28,7 +28,7 @@ const createDNSClient = (ns, protocol) => {
 }
 
 export const nslookup = (domain, ns = DEFAULT_NS, protocol = PROTOCOL.UDP) =>
-  Promise.resolve()
+  Bluebird.resolve()
     .then(async () => {
       const lookup = createDNSClient(ns, protocol)
       const result = await lookup(domain)

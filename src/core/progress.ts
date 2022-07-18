@@ -1,10 +1,16 @@
 import ora from 'ora'
 import chalk from 'chalk'
+import { IProgress } from './interface.js'
 
 const spinner = ora()
-const tasks = {}
+const tasks: Record<string, {
+  success: number,
+  warn: number,
+  fail: number,
+  expected: number,
+}> = {}
 
-const update = (name, message?) => {
+const update = (name: string, message?: string) => {
   const { success, warn, fail, expected } = tasks[name]
   spinner.text = `${name} ${success + warn}/${expected}. ${warn ? chalk.yellow(`(${warn} warns)`) : ''} ${
     fail ? chalk.yellow(`(${fail} fails)`) : ''
@@ -23,7 +29,7 @@ const update = (name, message?) => {
   }
 }
 
-export const progress = (name, expected) => {
+export const progress: IProgress = (name, expected) => {
   tasks[name] = {
     expected,
     success: 0,

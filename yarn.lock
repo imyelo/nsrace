@@ -79,6 +79,11 @@
   dependencies:
     defer-to-connect "^2.0.1"
 
+"@types/bluebird@^3.5.36":
+  version "3.5.36"
+  resolved "https://mirrors.cloud.tencent.com/npm/@types%2fbluebird/-/bluebird-3.5.36.tgz#00d9301d4dc35c2f6465a8aec634bb533674c652"
+  integrity sha512-HBNx4lhkxN7bx6P0++W8E289foSu8kO8GCk2unhuVggO+cE7rh9DhZUyPhUxNRG9m+5B5BTKxZQ5ZP92x/mx9Q==
+
 "@types/cacheable-request@^6.0.2":
   version "6.0.2"
   resolved "https://mirrors.cloud.tencent.com/npm/@types%2fcacheable-request/-/cacheable-request-6.0.2.tgz#c324da0197de0a98a2312156536ae262429ff6b9"
@@ -88,6 +93,11 @@
     "@types/keyv" "*"
     "@types/node" "*"
     "@types/responselike" "*"
+
+"@types/cli-table@^0.3.0":
+  version "0.3.0"
+  resolved "https://mirrors.cloud.tencent.com/npm/@types%2fcli-table/-/cli-table-0.3.0.tgz#f1857156bf5fd115c6a2db260ba0be1f8fc5671c"
+  integrity sha512-QnZUISJJXyhyD6L1e5QwXDV/A5i2W1/gl6D6YMc8u0ncPepbv/B4w3S+izVvtAg60m6h+JP09+Y/0zF2mojlFQ==
 
 "@types/eslint@^8.4.2":
   version "8.4.5"
@@ -140,6 +150,16 @@
   integrity sha512-85Y2BjiufFzaMIlvJDvTTB8Fxl2xfLo4HgmHzVBz08w4wDePCTjYw66PdrolO0kzli3yam/YCgRufyo1DdQVTA==
   dependencies:
     "@types/node" "*"
+
+"@types/tcp-ping@^0.1.3":
+  version "0.1.3"
+  resolved "https://mirrors.cloud.tencent.com/npm/@types%2ftcp-ping/-/tcp-ping-0.1.3.tgz#7c68e84615be80ab259cf911acae154ed8c9a726"
+  integrity sha512-xWNCZ0P570Chs+Xco1a4wWXaZSZRMYsAiRHGq+pF85R9vc16ZI0PoZiCGKcdsGQPpuyAyAtcGK+t7CLN2v1A9w==
+
+"@types/text-table@^0.2.2":
+  version "0.2.2"
+  resolved "https://mirrors.tencent.com/npm/@types%2ftext-table/-/text-table-0.2.2.tgz#774c90cfcfbc8b4b0ebb00fecbe861dc8b1e8e26"
+  integrity sha512-dGoI5Af7To0R2XE8wJuc6vwlavWARsCh3UKJPjWs1YEqGUqfgBI/j/4GX0yf19/DsDPPf0YAXWAp8psNeIehLg==
 
 "@typescript-eslint/eslint-plugin@^5.30.6":
   version "5.30.6"

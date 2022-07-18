@@ -3,7 +3,12 @@
   "version": "0.3.0",
   "description": "Runs a race, lookups the fastest IP of any domain from different DNS servers",
   "type": "module",
-  "exports": "./lib/index.js",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "default": "./lib/index.js"
+    }
+  },
   "types": "./types/index.d.js",
   "bin": {
     "nsrace": "lib/bin/nsrace",

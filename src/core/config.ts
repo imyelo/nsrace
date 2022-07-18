@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-named-default
 import { default as Conf } from 'conf'
 
+const PROJECT_NAME = 'nsrace'
 const DEFAULT_CONFIG = {
   // Check https://public-dns.info/ for more servers.
   // And https://public-dns.info/nameserver/cn.html too.
@@ -31,4 +32,4 @@ const DEFAULT_CONFIG = {
   },
 }
 
-export const config = new Conf({ defaults: DEFAULT_CONFIG })
+export const config = new Conf({ projectName: PROJECT_NAME, defaults: DEFAULT_CONFIG })
